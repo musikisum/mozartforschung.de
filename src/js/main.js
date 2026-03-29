@@ -167,8 +167,14 @@ var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').match
   hint.textContent = 'Scrollen';
   sticky.appendChild(hint);
 
+  function suggestCard() {
+    var w = window.innerWidth;
+    var fromRight = w >= 1500 ? 4 : w >= 1000 ? 5 : Math.round(N / 2) + 1;
+    var idx = N - fromRight;
+    if (idx >= 0) items[idx].card.classList.add('card--suggested');
+  }
+
   function lerp(a, b, t) { return a + (b - a) * t; }
-  function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
   function posMod(v, m) { return ((v % m) + m) % m; }
   function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
 
@@ -226,6 +232,8 @@ var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').match
       vP      = 0;
       running = false;
       track.classList.remove('carousel-moving');
+      // Vorschlag-Karte markieren: 4. von rechts auf kleinen, 6. auf großen Displays
+      suggestCard();
       return;   // Loop hält an
     }
     requestAnimationFrame(loop);
@@ -237,12 +245,14 @@ var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').match
       track.classList.add('carousel-moving');
       requestAnimationFrame(loop);
     } else {
-      // bereits läuft, aber neuer Input → Einblend-Timer löschen falls vorhanden
       track.classList.add('carousel-moving');
     }
+    // Vorschlag-Markierung beim nächsten Scrollen entfernen
+    cards.forEach(function (c) { c.classList.remove('card--suggested'); });
   }
 
-  draw();   // einmaliger Initialrender
+  draw();        // einmaliger Initialrender
+  suggestCard(); // Vorschlag sofort beim Laden
 
   document.addEventListener('wheel', function (e) {
     e.preventDefault();
@@ -265,7 +275,12 @@ var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').match
     e.preventDefault();
   }, { passive: false });
 
-  window.addEventListener('resize', function () { cachedH = 0; draw(); }, { passive: true });
+  window.addEventListener('resize', function () {
+    cachedH = 0;
+    draw();
+    cards.forEach(function (c) { c.classList.remove('card--suggested'); });
+    if (!running) suggestCard();
+  }, { passive: true });
 }());
 
 

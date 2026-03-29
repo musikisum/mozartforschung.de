@@ -285,7 +285,9 @@ a { color: inherit; }
 }
 
 .card:hover { background: #5c0000; border-color: transparent; }
-.carousel-moving .card:hover { background: rgba(28, 25, 22, 0.5); border-color: rgba(255,255,255,0.07); }
+.card--suggested { background: #7a0000; border-color: rgba(255,255,255,0.15); }
+.carousel-moving .card:hover,
+.carousel-moving .card--suggested { background: rgba(28, 25, 22, 0.5); border-color: rgba(255,255,255,0.07); }
 
 /* Bild-Slot: 25% der Kartenhöhe, Platzhalter für späteres Bild */
 .card__img {
