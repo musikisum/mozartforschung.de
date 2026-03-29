@@ -1,0 +1,25 @@
+---
+layout: base.njk
+---
+<div class="article-layout" id="main">
+  <button
+    class="toc-toggle"
+    aria-controls="article-toc"
+    aria-expanded="false"
+  >
+    <span class="toc-toggle__label">Inhaltsverzeichnis ↓</span>
+  </button>
+
+  <nav
+    class="article-toc"
+    id="article-toc"
+    aria-label="Inhaltsverzeichnis"
+  >
+    <p class="toc__title">Inhalt</p>
+    <ul class="toc__list" id="toc-list" role="list"></ul>
+  </nav>
+
+  <article class="article-main">
+    {{ content | safe }}
+  </article>
+</div>

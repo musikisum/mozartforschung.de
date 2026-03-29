@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Wissenschaftliche Publikationen zur Musik Wolfgang Amadé Mozarts von Ulrich Kaiser.">
+  <meta name="author" content="Ulrich Kaiser">
+  <title>{% if title and title != "Index" %}{{ title }} — {% endif %}mozartforschung.de</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/images/favicon/site.webmanifest">
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <nav class="site-nav" aria-label="Hauptnavigation">
+    <a class="site-nav__brand" href="/">mozartforschung.de</a>
+
+    <button class="site-nav__toggle" aria-label="Menü öffnen" aria-expanded="false">
+      <svg width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true">
+        <rect y="0"  width="22" height="1.5" fill="currentColor" rx="0.75"/>
+        <rect y="7"  width="22" height="1.5" fill="currentColor" rx="0.75"/>
+        <rect y="14" width="22" height="1.5" fill="currentColor" rx="0.75"/>
+      </svg>
+    </button>
+
+    <ul class="site-nav__links" role="list">
+      <li><a href="/#papers">Home</a></li>
+      <li><a href="https://openmusic.academy/docs/RZzDBYin6xbCy2PBevQ21q/ueberleitungen-in-sonaten-und-sinfonien-datenbankprojekt">Formfunktion</a></li>
+      <li><a href="/impressum/">Impressum</a></li>
+    </ul>
+  </nav>
+
+  {{ content | safe }}
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

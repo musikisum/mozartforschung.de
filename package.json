@@ -1,0 +1,14 @@
+{
+  "name": "mozartforschung.de",
+  "version": "3.0.0",
+  "description": "Forschungen zu W. A. Mozart von Ulrich Kaiser",
+  "scripts": {
+    "start": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "author": "Ulrich Kaiser",
+  "license": "CC BY-SA",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}
