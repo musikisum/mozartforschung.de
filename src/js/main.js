@@ -106,180 +106,54 @@ var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').match
   tocLinks.forEach(function (t) { observer.observe(t.target); });
 }());
 
-// ── Card gallery: Flush-Left-Karussell ───────────────────────────────────
-//
-//  Schlüsselidee: Alle Kacheln werden nach slotPos sortiert und lückenlos
-//  nebeneinander gesetzt (flush-left). Keine festen cumX-Positionen —
-//  jede Kachel liegt direkt an der rechten Kante der vorherigen.
-//  Dadurch können keine Lücken entstehen.
-//
-//  Eintritt: Kachel wächst aus Ecke (0, H) heraus (Größe 0 → sizes[0]).
-//  Austritt: Kachel blendet rechts aus, ohne die anderen zu verschieben.
-//
+// ── Card gallery ─────────────────────────────────────────────────────────
+//  6 fixe Slots (Treppe). Wheel/Touch → Offset +1/-1 → data-slot auf Cards.
+//  CSS erledigt alle Transforms (GPU) und den Flip für Slot 5.
 (function () {
-  var section = document.querySelector('.gallery-section');
-  var sticky  = document.querySelector('.gallery-sticky');
-  var track   = document.querySelector('.gallery-track');
-  if (!section || !sticky || !track) return;
+  var sticky = document.getElementById('gallery-sticky');
+  if (!sticky) return;
 
-  document.documentElement.style.overflow = 'hidden';
-  document.body.style.overflow = 'hidden';
+  var cards  = Array.prototype.slice.call(sticky.querySelectorAll('.card'));
+  var TOTAL  = cards.length;   // 8 (oder mehr)
+  var VISIBLE = 6;
+  var offset  = 0;
+  var locked  = false;
 
-  var cards = Array.prototype.slice.call(track.querySelectorAll('.card'));
-  var N     = cards.length;
-  if (N < 2) return;
-
-  var FRAC_MIN = 0.12, FRAC_MAX = 0.74, FRAC_EXP = 1.4;
-  var ENTRY    = 0.70;
-  var EXIT     = 0.65;
-  var FRICTION = 0.96;
-  var MAX_VP   = 0.10;
-  var STOP_AT  = 0.0002;  // unter diesem Wert: Loop stoppen, Flimmern verhindern
-
-  // Pre-allozierte Arbeits-Arrays (kein GC im Loop)
-  var sizes  = new Array(N);
-  var items  = new Array(N);
-  for (var ii = 0; ii < N; ii++) {
-    items[ii] = { card: cards[ii], sp: 0, size: 0, opacity: 1, x: 0 };
-  }
-  var cachedH = 0;
-
-  var BASE = 500;   // wird bei erstem computeSizes auf sizes[N-1] gesetzt
-
-  function computeSizes(H) {
-    if (H === cachedH) return;
-    cachedH = H;
-    for (var s = 0; s < N; s++) {
-      var ft = s / (N - 1);
-      sizes[s] = Math.round((FRAC_MIN + (FRAC_MAX - FRAC_MIN) * Math.pow(ft, FRAC_EXP)) * H);
-    }
-    // BASE = größte Kachel → scale immer ≤ 1 → kein Upscaling, kein Blur
-    BASE = sizes[N - 1];
-    sticky.style.setProperty('--card-base', BASE + 'px');
-  }
-
-  var P       = 0;
-  var vP      = 0;
-  var running = false;
-
-  var hint = document.createElement('p');
-  hint.className = 'gallery-scroll-hint';
-  hint.textContent = 'Scrollen';
-  sticky.appendChild(hint);
-
-  function suggestCard() {
-    var w = window.innerWidth;
-    var fromRight = w >= 1500 ? 4 : w >= 1000 ? 5 : Math.round(N / 2) + 1;
-    var idx = N - fromRight;
-    if (idx >= 0) items[idx].card.classList.add('card--suggested');
-  }
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
-  function posMod(v, m) { return ((v % m) + m) % m; }
-  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
-
-  // ── Render: width/height für scharfe Darstellung, translateX GPU-seitig ──
-  function draw() {
-    var H = sticky.clientHeight;
-    computeSizes(H);
-
-    var exitStart = N - 1 - EXIT;
-    var i, item, sp, t, lo, hi;
-
-    for (i = 0; i < N; i++) {
-      item = items[i];
-      sp   = posMod((N - 1 - i) + P, N);
-      if (sp > N - ENTRY) sp -= N;
-      item.sp = sp;
-
-      if (sp < 0) {
-        t            = (sp + ENTRY) / ENTRY;
-        item.size    = Math.round(sizes[0] * easeInOut(t));
-        item.opacity = t < 0.4 ? t / 0.4 : 1;
+  function place() {
+    cards.forEach(function (card, i) {
+      var slot = ((i - offset) % TOTAL + TOTAL) % TOTAL;
+      if (slot < VISIBLE) {
+        card.dataset.slot = slot;
       } else {
-        lo           = sp | 0;
-        hi           = lo + 1;
-        t            = sp - lo;
-        item.size    = Math.round(lerp(sizes[lo < N ? lo : N-1],
-                                       sizes[hi < N ? hi : N-1], t));
-        item.opacity = sp > exitStart ? (N - 1 - sp) / EXIT : 1;
+        delete card.dataset.slot;
       }
-    }
-
-    items.sort(function (a, b) { return a.sp - b.sp; });
-
-    var curX = 0;
-    for (i = 0; i < N; i++) {
-      item = items[i];
-      var px = Math.round(curX);
-      var sc = item.size / BASE;
-      // Nur transform + opacity — kein width/height = kein Text-Reflow
-      item.card.style.transform = 'translateX(' + px + 'px) scale(' + sc + ')';
-      item.card.style.opacity   = item.opacity;
-      item.card.style.zIndex    = i + 1;
-      curX += item.size;
-    }
+    });
   }
 
-  // ── Loop: stoppt wenn Bewegung zu klein → kein Flimmern im Ruhezustand ──
-  function loop() {
-    if (vP >  MAX_VP) vP =  MAX_VP;
-    if (vP < -MAX_VP) vP = -MAX_VP;
-    vP *= FRICTION;
-    P  += vP;
-    draw();
-    if (Math.abs(vP) < STOP_AT) {
-      vP      = 0;
-      running = false;
-      track.classList.remove('carousel-moving');
-      // Vorschlag-Karte markieren: 4. von rechts auf kleinen, 6. auf großen Displays
-      suggestCard();
-      return;   // Loop hält an
-    }
-    requestAnimationFrame(loop);
+  place(); // Startzustand ohne Animation
+
+  function step(dir) {
+    if (locked) return;
+    locked = true;
+    setTimeout(function () { locked = false; }, 680);
+    offset = (offset + dir + TOTAL) % TOTAL;
+    place();
   }
 
-  function startLoop() {
-    if (!running) {
-      running = true;
-      track.classList.add('carousel-moving');
-      requestAnimationFrame(loop);
-    } else {
-      track.classList.add('carousel-moving');
-    }
-    // Vorschlag-Markierung beim nächsten Scrollen entfernen
-    cards.forEach(function (c) { c.classList.remove('card--suggested'); });
-  }
-
-  draw();        // einmaliger Initialrender
-  suggestCard(); // Vorschlag sofort beim Laden
-
-  document.addEventListener('wheel', function (e) {
+  // Wheel
+  sticky.addEventListener('wheel', function (e) {
     e.preventDefault();
-    var delta = e.deltaY;
-    if (e.deltaMode === 1) delta *= 20;
-    if (e.deltaMode === 2) delta *= 400;
-    vP += delta * 0.0010;
-    startLoop();
+    step(e.deltaY > 0 ? 1 : -1);
   }, { passive: false });
 
-  var touchY = 0;
-  document.addEventListener('touchstart', function (e) {
-    touchY = e.touches[0].clientY;
+  // Touch
+  var touchX = 0;
+  sticky.addEventListener('touchstart', function (e) {
+    touchX = e.touches[0].clientX;
   }, { passive: true });
-  document.addEventListener('touchmove', function (e) {
-    var dy = touchY - e.touches[0].clientY;
-    touchY = e.touches[0].clientY;
-    vP += dy * 0.004;
-    startLoop();
-    e.preventDefault();
-  }, { passive: false });
-
-  window.addEventListener('resize', function () {
-    cachedH = 0;
-    draw();
-    cards.forEach(function (c) { c.classList.remove('card--suggested'); });
-    if (!running) suggestCard();
+  sticky.addEventListener('touchend', function (e) {
+    var diff = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) step(diff > 0 ? 1 : -1);
   }, { passive: true });
 }());
 

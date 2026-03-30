@@ -23,7 +23,7 @@
 
 /* ==========================================
    mozartforschung.de — Design 3.0
-   Minimal academic · inspired by detroit.paris
+   Minimal academic
    ========================================== */
 
 /* ── Custom Properties ── */
@@ -177,20 +177,23 @@ a { color: inherit; }
 }
 
 /* ==========================================
-   Card Gallery — scroll-driven diagonal zoom
-   Cards travel along a path: lower-left (tiny) → upper-right (large).
-   JS controls position + scale individually per card.
+   Card Gallery — 6 fixe Slots, Cards rutschen per Scroll
+   JS setzt data-slot="0..5" auf jeder Card.
+   CSS: alle Transforms (GPU) + Flip-Animation für Slot 5.
+   Slot-Breiten: 5|8|12|18|27|30 vw = 100 vw
+   Slot-Kanten:  0|5|13|25|43|70 vw
    ========================================== */
 
 .gallery-section {
-  height: calc(100vh - var(--nav-h));
+  height: 100vh;
   background: var(--white);
 }
 
-/* Füllt die Gallery-Section vollständig; kein Sticky mehr nötig */
+/* Sticky-Container */
 .gallery-sticky {
-  position: relative;
-  height: 100%;
+  position: sticky;
+  top: 0;
+  height: 100vh;
   overflow: hidden;
 }
 .gallery-sticky--bg {
@@ -252,149 +255,150 @@ a { color: inherit; }
   pointer-events: none;
 }
 
-/* Track: just a container, no layout — cards are absolute */
-.gallery-track {
-  position: absolute;
-  inset: 0;
+/* Stage: Positioning-Kontext für alle Cards */
+.gallery-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-/* ── Individual card ── */
+/* ── Individual card ──
+   Referenzgröße 30vw × 30vw (= Slot 5).
+   transform-origin: left bottom → Treppe wächst von links-unten nach rechts-oben.
+   Skalen: 5/30 | 8/30 | 12/30 | 18/30 | 27/30 | 30/30
+*/
 .card {
   position: absolute;
-  bottom: 0;
   left: 0;
-  /* Feste Basis — JS skaliert nur per transform, kein Reflow */
-  width: var(--card-base, 500px);
-  height: var(--card-base, 500px);
-  transform-origin: bottom left;
+  bottom: 0;
+  width: 30vw;
+  height: 30vw;
+  transform-origin: left bottom;
+  container-type: inline-size;
+  perspective: 900px; /* Fluchtpunkt für card__face-Rotation, zentriert auf die Karte */
 
-  background: rgba(28, 25, 22, 0.5);
-  border: 1px solid rgba(255,255,255,0.07);
+  /* Versteckt: klein, leicht links */
+  transform: translateX(-3vw) scale(0.15);
+  opacity: 0;
+  pointer-events: none;
+
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity   0.35s ease;
+
   color: #fff;
   text-decoration: none;
+}
 
+/* Sichtbare Slots */
+.card[data-slot="0"] { transform: translateX(0vw)   scale(0.1667); opacity: 1; pointer-events: auto; }
+.card[data-slot="1"] { transform: translateX(5vw)   scale(0.2667); opacity: 1; pointer-events: auto; }
+.card[data-slot="2"] { transform: translateX(13vw)  scale(0.4);    opacity: 1; pointer-events: auto; }
+.card[data-slot="3"] { transform: translateX(25vw)  scale(0.6);    opacity: 1; pointer-events: auto; }
+.card[data-slot="4"] { transform: translateX(43vw)  scale(0.9);    opacity: 1; pointer-events: auto; }
+.card[data-slot="5"] { transform: translateX(70vw)  scale(1.0);    opacity: 1; pointer-events: auto; }
+
+/* card__face: visueller Inhalt + Flip-Animation
+   Dreht sich um die eigene Y-Achse (Fluchtpunkt = Mitte der Karte via perspective auf .card).
+   Kein perspective() im transform → keine Verzerrung. */
+.card__face {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 0;
   overflow: hidden;
-  will-change: transform, opacity;
-
-  transition: border-color 0.25s, background 0.25s;
-  
+  background: rgba(28, 25, 22, 0.8);
 }
 
-.card:hover { background: #5c0000; border-color: transparent; }
-.card--suggested { background: #7a0000; border-color: rgba(255,255,255,0.15); }
-.carousel-moving .card:hover,
-.carousel-moving .card--suggested { background: rgba(28, 25, 22, 0.5); border-color: rgba(255,255,255,0.07); }
 
-/* Bild-Slot: 25% der Kartenhöhe, Platzhalter für späteres Bild */
+.card:hover .card__face { background: #5c0000; }
+
+/* Bild-Slot */
 .card__img {
-  flex: 0 0 50%;
+  flex: 0 0 1;
   min-height: 0;
-  background: rgba(255,255,255,0.04);
   overflow: hidden;
 }
 .card__img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top left;
   display: block;
 }
 
-/* Text-Bereich: 75% der Kartenhöhe */
+/* Text-Bereich: alle Größen in cqw → skaliert automatisch mit Kartenbreite */
 .card__body {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 2rem 2.25rem 1.5rem;
-  transition: opacity 0.35s ease;
-}
-.carousel-moving .card__body {
-  opacity: 0;
-  transition: none;
+  padding: 8cqw 9cqw 6cqw;
 }
 .card__cat {
   font-family: var(--font-ui);
-  font-size: 1.2rem;
+  font-size: 3cqw;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.4);
   display: block;
 }
 .card__title {
-  font-size: 3rem;
-  line-height: 1.5em;
+  font-size: 8cqw;
+  line-height: 1.3em;
   font-weight: 700;
   color: #fff;
   flex: 1;
   display: flex;
   align-items: center;
-  margin: 0.5rem 0;
+  margin: 2cqw 0;
 }
 .card__sub {
-  font-size: 1rem;
+  font-size: 4cqw;
   line-height: 1.45;
-  color: rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.6);
 }
 .card__year {
   font-family: var(--font-ui);
-  font-size: 0.7rem;
+  font-size: 2cqw;
   letter-spacing: 0.1em;
   color: rgba(255,255,255,0.25);
   display: block;
-  margin-top: 0.5rem;
+  margin-top: 2cqw;
 }
 .card__arrow {
   position: absolute;
-  top: 1.25rem;
-  right: 1.5rem;
-  font-size: 1.4rem;
+  top: 3cqw;
+  right: 3.5cqw;
+  font-size: 4cqw;
   color: rgba(255,255,255,0.18);
   transition: color 0.2s, transform 0.2s;
   line-height: 1;
 }
 .card:hover .card__arrow { color: rgba(255,255,255,0.7); transform: translate(3px,-3px); }
 
-/* Scroll hint */
-.gallery-scroll-hint {
-  position: absolute;
-  bottom: 1.5rem;
-  right: 2rem;
-  z-index: 10;
-  font-family: var(--font-ui);
-  font-size: 0.6rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.2);
-  pointer-events: none;
-  animation: hint-pulse 2.5s ease-in-out infinite;
-}
-@keyframes hint-pulse {
-  0%, 100% { opacity: 0.3; }
-  50%       { opacity: 0.9; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .gallery-scroll-hint { animation: none; }
-}
-
 /* ── Mobile: vertical list ── */
 @media (max-width: 820px) {
   .gallery-section { height: auto !important; padding: 2rem 1rem 3rem; }
   .gallery-sticky  { position: static; height: auto; overflow: visible; }
   .gallery-label   { position: static; margin-bottom: 1.5rem; display: block; }
-  .gallery-track   { position: static; }
+  .gallery-stage   { position: static; height: auto; }
   .card {
-    position: static;
+    position: static !important;
+    transform: none !important;
     width: 100% !important;
     height: auto !important;
     min-height: 200px;
-    transform: none !important;
-    transform-origin: unset !important;
     opacity: 1 !important;
+    pointer-events: auto !important;
+    animation: none !important;
     margin-bottom: 1rem;
+    perspective: none;
+  }
+  .card__face {
+    position: static;
+    animation: none !important;
+    transform: none !important;
   }
 }
 
@@ -412,21 +416,6 @@ a { color: inherit; }
 .database-section a { color: rgba(255, 255, 255, 0.85); text-decoration: underline; text-decoration-color: rgba(255,255,255,0.25); }
 .database-section a:hover { color: #fff; text-decoration-color: rgba(255,255,255,0.7); }
 
-/* ==========================================
-   Footer
-   ========================================== */
-.site-footer {
-  background: var(--maroon);
-  padding: 2.5rem 2rem;
-  text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-}
-.site-footer p {
-  font-family: var(--font-ui);
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.3);
-}
 
 /* ==========================================
    Article Layout (Notenbücher)
@@ -516,6 +505,7 @@ a { color: inherit; }
 .article-main {
   padding: 4rem 3.5rem 7rem;
   max-width: 1200px;
+  background: var(--white);
 }
 
 /* Override beitragsStyles.css defaults */
@@ -696,6 +686,7 @@ a { color: inherit; }
   max-width: 680px;
   margin-inline: auto;
   padding: 4.5rem 2rem 7rem;
+  background: var(--white);
 }
 
 .subsite-content section { all: unset; display: block; }
@@ -734,6 +725,76 @@ a { color: inherit; }
   transition: text-decoration-color 0.2s;
 }
 .subsite-content a:hover { text-decoration-color: currentColor; }
+
+/* ── Hero-Page (z.B. Seitensatz) — Hintergrundbild wie Startseite ── */
+.hero-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+.hero-page__bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('/images/mf-kv1a.jpg');
+  background-size: cover;
+  background-position: center top;
+}
+.hero-page__content {
+  width: 100%;
+  max-width: 1200px;
+  padding: calc(var(--nav-h) + 1.25rem) 2rem 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.back-link {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  background: rgba(0,0,0,0.35);
+  padding: 0.4rem 0.85rem;
+  transition: background 0.2s;
+}
+.back-link:hover { background: rgba(0,0,0,0.6); }
+.video-notice {
+  margin-top: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: #000;
+  font-weight: 700;
+}
+
+/* ── Responsive YouTube-Embed ── */
+.video-wrap {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  background: #000;
+}
+.video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
 
 /* ── Iframe (Transition page) ── */
 .iframe-wrap {
