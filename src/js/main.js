@@ -121,7 +121,7 @@ var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').match
 
   function place() {
     cards.forEach(function (card, i) {
-      var slot = ((i - offset) % TOTAL + TOTAL) % TOTAL;
+      var slot = ((VISIBLE - 1 - i - offset) % TOTAL + TOTAL) % TOTAL;
       if (slot < VISIBLE) {
         card.dataset.slot = slot;
       } else {
@@ -143,7 +143,7 @@ var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').match
   // Wheel
   sticky.addEventListener('wheel', function (e) {
     e.preventDefault();
-    step(e.deltaY > 0 ? 1 : -1);
+    step(e.deltaY > 0 ? -1 : 1);
   }, { passive: false });
 
   // Touch
@@ -153,7 +153,7 @@ var REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').match
   }, { passive: true });
   sticky.addEventListener('touchend', function (e) {
     var diff = touchX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) step(diff > 0 ? 1 : -1);
+    if (Math.abs(diff) > 50) step(diff > 0 ? -1 : 1);
   }, { passive: true });
 }());
 

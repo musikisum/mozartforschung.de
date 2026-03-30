@@ -1,0 +1,32 @@
+---
+title: Index
+layout: main.njk
+---
+
+<div class="gallery-section" id="papers">
+  <div class="gallery-sticky gallery-sticky--bg" id="gallery-sticky">
+    <div class="gallery-hero-title">
+      <h1 class="gallery-hero-title__main">Mozartforschung</h1>
+      <p class="gallery-hero-title__sub">von Prof.&thinsp;Dr. Ulrich Kaiser</p>
+    </div>
+    <p class="gallery-label">Beiträge zur Mozartforschung</p>
+    <div class="gallery-stage" id="gallery-stage">
+
+      {% for card in cards %}
+      <a class="card" href="{{ card.href }}"{% if "http" in card.href or ".pdf" in card.href %} target="_blank" rel="noopener"{% endif %}>
+        <div class="card__face">
+          <div class="card__img"><img src="{{ card.image }}"></div>
+          <div class="card__body">
+            <span class="card__cat">{{ card.cat }}</span>
+            <h2 class="card__title">{{ card.title | safe }}</h2>
+            <p class="card__sub">{{ card.sub }}</p>
+            <span class="card__year">{{ card.year }}</span>
+          </div>
+          <span class="card__arrow">{{ card.arrow }}</span>
+        </div>
+      </a>
+      {% endfor %}
+
+    </div><!-- .gallery-stage -->
+  </div><!-- .gallery-sticky -->
+</div><!-- .gallery-section -->
