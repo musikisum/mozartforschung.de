@@ -2,16 +2,16 @@
   {
     "href": "https://kaiser-ulrich.de/publikationen/fischer-mozart-musikwissenschaft/",
     "image": "/images/zauberfloete-bildnisarie.jpg",
-    "cat": "Aufsatz · PDF",
+    "cat": "Aufsatz · PDF · HMTL",
     "title": "Helene Fischer,<br>W. A. Mozart",
     "sub": "und die Subdominante im 5. Takt. Oder: Musikalische Analyse als Spiegel für Vorurteile in der Musikwissenschaft",
     "year": "2025",
     "arrow": "→"
   },
   {
-    "href": "/notenbuecher-mozarts/",
+    "href": "/downloads/kaiser_notenbuechermozarts-kassel-2007.pdf",
     "image": "/images/NN-seite-19.jpg",
-    "cat": "Buch",
+    "cat": "Buch · PDF · HTML",
     "title": "Die Notenbücher der Mozarts",
     "sub": "als Grundlage der Analyse von W.\u202aA. Mozarts Kompositionen 1761–1767",
     "year": "2007",
@@ -20,7 +20,7 @@
   {
     "href": "https://www.gmth.de/zeitschrift/artikel/956.aspx",
     "image": "/images/NN-seite-67.jpg",
-    "cat": "Aufsatz · Online",
+    "cat": "Aufsatz · PDF · HMTL",
     "title": "Formfunktionen der Sonatenform",
     "sub": "Kritik an William E. Caplins Verständnis. ZGMTH 15/1",
     "year": "2018",
@@ -31,18 +31,27 @@
     "image": "/images/NN-seite-68.jpg",
     "cat": "Aufsatz · PDF",
     "title": "Von der Sequenz zur Kadenz",
-    "sub": "Zur Entstehungsgeschichte der Interpunktion von Sonatenmusik. Olms 2020",
+    "sub": "Zur Entstehungsgeschichte der Interpunktion von Sonatenmusik.",
     "year": "2020",
     "arrow": "↓"
   },
   {
     "href": "/seitensatz/",
     "image": "/images/NN-seite-69.jpg",
-    "cat": "Vortrag · Video",
+    "cat": "Video · Aufsatz",
     "title": "Der Seitensatz",
-    "sub": "Zur Karriere eines dogmatischen Begriffs. Czech Academy of Sciences 2020",
-    "year": "2020",
+    "sub": "Zur Karriere eines dogmatischen Begriffs",
+    "year": "2024",
     "arrow": "▶"
+  },
+  {
+    "href": "https://academic.oup.com/mts/advance-article-abstract/doi/10.1093/mts/mtad012/7248518?redirectedFrom=fulltext",
+    "image": "/images/NN-seite-69.jpg",
+    "cat": "Aufsatz",
+    "title": "Models for Mozart’s Transitions: A Transatlantic Exchange",
+    "sub": "",
+    "year": "2023",
+    "arrow": "↗"
   },
   {
     "href": "/downloads/kaiser_mediantischeharmonik-2015.pdf",

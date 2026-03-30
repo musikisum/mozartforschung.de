@@ -311,7 +311,6 @@ a { color: inherit; }
   border: 4px solid rgba(28, 25, 22, 0.8);
 }
 
-
 .card:hover .card__face { background: #5c0000; }
 
 /* Bild-Slot */
@@ -356,14 +355,14 @@ a { color: inherit; }
 }
 .card__sub {
   font-size: 4cqw;
-  line-height: 1.45;
+  line-height: 1.2;
   color: rgba(255,255,255,0.6);
 }
 .card__year {
   font-family: var(--font-ui);
-  font-size: 2cqw;
   letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.25);
+  line-height: 1;
+  color: rgba(255,255,255,0.6);
   display: block;
   margin-top: 2cqw;
 }
