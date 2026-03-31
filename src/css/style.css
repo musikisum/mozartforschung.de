@@ -308,7 +308,7 @@ a { color: inherit; }
   justify-content: flex-start;
   overflow: hidden;
   background: rgba(28, 25, 22, 0.8);
-  border: 4px solid rgba(28, 25, 22, 0.8);
+  border: 3px solid rgba(255,255,255,0.6);
 }
 
 .card:hover .card__face { background: #5c0000; }
