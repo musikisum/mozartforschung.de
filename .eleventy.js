@@ -4,6 +4,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/css");
   eleventyConfig.addPassthroughCopy("src/js");
   eleventyConfig.addPassthroughCopy("src/fonts");
+  eleventyConfig.addPassthroughCopy("src/CNAME");
   eleventyConfig.addPassthroughCopy({ "src/web.config": "web.config" });
   eleventyConfig.addPassthroughCopy({ "src/.htaccess": ".htaccess" });
 
