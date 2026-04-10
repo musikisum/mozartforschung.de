@@ -1,5 +1,6 @@
 build
 node_modules
 .claude
-src/downloads
+src/downloads/kaiser_notenbuechermozarts-2-2013.pdf
+src/downloads/kaiser_notenbuechermozarts-kassel-2007.pdf
 BUILD.txt
