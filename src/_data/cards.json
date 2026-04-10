@@ -9,7 +9,7 @@
     "arrow": "→"
   },
   {
-    "href": "https://raw.githubusercontent.com/musikisum/mozartforschung.de/main/src/downloads/kaiser_notenbuechermozarts-kassel-2007.sm.pdf",
+    "href": "https://github.com/musikisum/mozartforschung.de/blob/main/src/downloads/kaiser_notenbuechermozarts-kassel-2007.sm.pdf",
     "image": "/images/NN-seite-19.jpg",
     "cat": "Buch · PDF · HTML",
     "title": "Die Notenbücher der Mozarts",
@@ -27,7 +27,7 @@
     "arrow": "↗"
   },
   {
-    "href": "https://raw.githubusercontent.com/musikisum/mozartforschung.de/main/src/downloads/kaiser_gmth-proceedings-artikel-169.pdf",
+    "href": "https://github.com/musikisum/mozartforschung.de/blob/main/src/downloads/kaiser_gmth-proceedings-artikel-169.pdf",
     "image": "/images/NN-seite-68.jpg",
     "cat": "Aufsatz · PDF",
     "title": "Von der Sequenz zur Kadenz",
@@ -54,7 +54,7 @@
     "arrow": "↗"
   },
   {
-    "href": "https://raw.githubusercontent.com/musikisum/mozartforschung.de/main/src/downloads/kaiser_mediantischeharmonik-2015.pdf",
+    "href": "https://github.com/musikisum/mozartforschung.de/blob/main/src/downloads/kaiser_mediantischeharmonik-2015.pdf",
     "image": "/images/NN-seite-65.jpg",
     "cat": "Aufsatz · PDF",
     "title": "Formfunktionen mediantischer Harmonik",
@@ -63,7 +63,7 @@
     "arrow": "↓"
   },
   {
-    "href": "https://raw.githubusercontent.com/musikisum/mozartforschung.de/main/src/downloads/kaiser_durchfuehrung-2013.pdf",
+    "href": "https://github.com/musikisum/mozartforschung.de/blob/main/src/downloads/kaiser_durchfuehrung-2013.pdf",
     "image": "/images/NN-seite-28.jpg",
     "cat": "Aufsatz · PDF",
     "title": "Durchführungen im Werk W.\u202aA. Mozarts",
@@ -72,7 +72,7 @@
     "arrow": "↓"
   },
   {
-    "href": "https://raw.githubusercontent.com/musikisum/mozartforschung.de/main/src/downloads/kaiser_ueberleitung-2009.pdf",
+    "href": "https://github.com/musikisum/mozartforschung.de/blob/main/src/downloads/kaiser_ueberleitung-2009.pdf",
     "image": "/images/NN-seite-27.jpg",
     "cat": "Aufsatz · PDF",
     "title": "Der Begriff der »Überleitung«",
